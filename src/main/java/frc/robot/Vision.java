@@ -19,25 +19,29 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision {
     private final PhotonCamera camera;
     private final PhotonPoseEstimator photonEstimator;
     private double lastEstTimestamp = 0;
-
+    public SendableChooser<String> allianceColor = new SendableChooser<>();
     // Simulation
     private PhotonCameraSim cameraSim;
     private VisionSystemSim visionSim;
 
     public Vision() {
         camera = new PhotonCamera(kCameraName);
-
+        allianceColor.setDefaultOption("Red", "Red");
+        allianceColor.addOption("Blue", "Blue");
+        SmartDashboard.putData("Alliance Color", allianceColor);
         photonEstimator =
                 new PhotonPoseEstimator(
                         kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, kRobotToCam);
-        photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-
-        kTagLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
+        photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);  
+              
+        
         // ----- Simulation
         if (Robot.isSimulation()) {
             // Create the vision system simulation which handles cameras and targets on the field.
@@ -73,6 +77,11 @@ public class Vision {
      *     used for estimation.
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+        if(allianceColor.getSelected() == "Blue"){
+            kTagLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
+        }else{
+            kTagLayout.setOrigin(OriginPosition.kRedAllianceWallRightSide);
+        }
         var visionEst = photonEstimator.update();
         double latestTimestamp = camera.getLatestResult().getTimestampSeconds();
         boolean newResult = Math.abs(latestTimestamp - lastEstTimestamp) > 1e-5;

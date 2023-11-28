@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -24,6 +25,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+
 
 
 public class DriveSubsystem extends SubsystemBase {
@@ -78,12 +80,25 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
   }
 
+  private final Field2d dash_pose = new Field2d();
+
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
     SmartDashboard.putNumber("angle", -m_gyro.getAngle());
     m_pose.setRobotPose(m_odometry.getEstimatedPosition());
-    SmartDashboard.putData("pose", m_pose);
+    if(vision.allianceColor.getSelected() == "Red"){
+      Pose2d n_pose = m_pose.getRobotPose();
+      Translation2d translate = new Translation2d(16.5 - n_pose.getX(), 8 - n_pose.getY());
+      Rotation2d rotation = new Rotation2d();
+      rotation = n_pose.getRotation().plus(Rotation2d.fromDegrees(180));
+      Pose2d dash_poseP = new Pose2d(translate, rotation);
+      dash_pose.setRobotPose(dash_poseP);
+      SmartDashboard.putData("pose", dash_pose);
+    }else{
+      SmartDashboard.putData("pose", m_pose);
+    }
+    
     m_odometry.update(
         Rotation2d.fromDegrees(-m_gyro.getAngle()),
         new SwerveModulePosition[] {
