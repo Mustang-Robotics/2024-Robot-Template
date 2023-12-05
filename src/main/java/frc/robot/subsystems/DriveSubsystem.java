@@ -2,6 +2,10 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
+//SUMMARY NOTES: Declares the general system and initializes the modules of the Driving Specifically. 
+//It also takes the functions called by the buttons and performs any math needed on them before calling the final function to actually declare
+//the robot's devises update
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -14,7 +18,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.util.WPIUtilJNI;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.ADIS16448_IMU;
+//import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import frc.robot.Vision;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
@@ -29,7 +34,9 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 
 public class DriveSubsystem extends SubsystemBase {
+  
   // Create MAXSwerveModules
+  //The Four Swerve Wheels
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
       DriveConstants.kFrontLeftTurningCanId,
@@ -51,7 +58,8 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kBackRightChassisAngularOffset);
 
   // The gyro sensor
-  private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
+  //private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
+  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU();
 
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
@@ -85,9 +93,11 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
+    //Periodic methods are called every 20 ms by default (The basic update method)
     SmartDashboard.putNumber("angle", -m_gyro.getAngle());
     m_pose.setRobotPose(m_odometry.getEstimatedPosition());
     if(vision.allianceColor.getSelected() == "Red"){
+      //Update the robot's pos to the code identified in the field.
       Pose2d n_pose = m_pose.getRobotPose();
       Translation2d translate = new Translation2d(16.5 - n_pose.getX(), 8 - n_pose.getY());
       Rotation2d rotation = new Rotation2d();
@@ -106,7 +116,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_frontRight.getPosition(),
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
-        });
+    });
     var visionEst = vision.getEstimatedGlobalPose();
     visionEst.ifPresent(
       est -> {
@@ -114,8 +124,8 @@ public class DriveSubsystem extends SubsystemBase {
         var estStdDevs = vision.getEstimationStdDevs(estPose);
 
                     m_odometry.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
-                });
-      }
+    });
+  }
     
   
  
@@ -142,7 +152,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         },
-        pose);
+    pose);
   }
 
   /**
@@ -219,6 +229,7 @@ public class DriveSubsystem extends SubsystemBase {
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    //NOTE: This is the final function that sets the drive wheels to actually go.
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);

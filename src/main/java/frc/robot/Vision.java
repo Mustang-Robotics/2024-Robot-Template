@@ -1,3 +1,5 @@
+
+//SUMMARY NOTES: Declares the camera systems
 package frc.robot;
 
 import static frc.robot.Constants.Vision.*;

@@ -2,6 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+//SUMMARY NOTES: Declares the modules relating to the swerve system (Makes one wheel)
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -37,6 +38,7 @@ public class MAXSwerveModule {
    * Encoder.
    */
   public MAXSwerveModule(int drivingCANId, int turningCANId, double chassisAngularOffset) {
+    //NOTE: This is the initial declaraction of the swerve motors. From here, you can use this to create as many instances as needed
     m_drivingSparkMax = new CANSparkMax(drivingCANId, MotorType.kBrushless);
     m_turningSparkMax = new CANSparkMax(turningCANId, MotorType.kBrushless);
 
@@ -140,6 +142,7 @@ public class MAXSwerveModule {
    *
    * @param desiredState Desired state with speed and angle.
    */
+  //NOTE: Actually applies the math to the swervewheels.
   public void setDesiredState(SwerveModuleState desiredState) {
     // Apply chassis angular offset to the desired state.
     SwerveModuleState correctedDesiredState = new SwerveModuleState();

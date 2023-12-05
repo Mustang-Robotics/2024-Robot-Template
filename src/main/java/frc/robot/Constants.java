@@ -2,6 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+//SUMMARY NOTES: Declares the constants relating to the entire robot
 package frc.robot;
 
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -132,7 +133,7 @@ public final class Constants {
 
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 3;// Base = 3
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
@@ -149,7 +150,7 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 5676;
   }
   public static class Vision {
-        public static final String kCameraName = "main";
+        public static final String kCameraName = "OV5647";
         // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
         public static final Transform3d kRobotToCam =
                 new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
