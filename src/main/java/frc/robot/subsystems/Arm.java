@@ -1,9 +1,7 @@
 
 //SUMMARY NOTES: Declares the modules relating to the motors. (One Motor)
 package frc.robot.subsystems;
-
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase{
