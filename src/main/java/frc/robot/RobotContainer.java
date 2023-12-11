@@ -59,7 +59,7 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                false, true), //Base: true, true
+            true, true), //Base: true, true
             m_robotDrive));
     SmartDashboard.putData("Auto Chooser", m_chooser);
   }
@@ -82,6 +82,9 @@ public class RobotContainer {
     new JoystickButton(m_driverController, Button.kB.value).whileTrue(new StartEndCommand (() -> m_arm.ArmMovementUp(), () -> m_arm.ArmMovementDown(), m_arm));
   }
 
+  public void anglePublish(){
+    SmartDashboard.putNumber("Arm Angle", m_arm.ArmAngle());
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
