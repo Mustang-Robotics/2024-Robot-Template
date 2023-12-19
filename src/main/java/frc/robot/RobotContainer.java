@@ -6,12 +6,13 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 
 import frc.robot.Constants.OIConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
@@ -73,17 +74,32 @@ public class RobotContainer {
    * passing it to a
    * {@link JoystickButton}.
    */
+
+  private GenericEntry setPoint = m_arm.tab.add("setPoint", 0).getEntry();
   private void configureButtonBindings() { //NOTE: All button commands
     new JoystickButton(m_driverController, Button.kRightBumper.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
     new JoystickButton(m_driverController, Button.kA.value).whileTrue(new RunCommand(() -> m_robotDrive.zeroHeading(), m_robotDrive));
-    new JoystickButton(m_driverController, Button.kB.value).whileTrue(new StartEndCommand (() -> m_arm.ArmMovementUp(), () -> m_arm.ArmMovementDown(), m_arm));
+    //new JoystickButton(m_driverController, Button.kB.value).whileTrue(new StartEndCommand (() -> m_arm.ArmMovementUp(), () -> m_arm.ArmMovementDown(), m_arm));
+    new JoystickButton(m_driverController, Button.kB.value)
+      .onTrue
+      (Commands.runOnce(
+        ()->{
+          m_arm.setGoal(setPoint.getDouble(0));
+          m_arm.enable();
+        },
+          m_arm));
   }
-
+  
+  private GenericEntry PID_kp = m_arm.tab.add("PID_kp", 0).getEntry();
+  private GenericEntry PID_ki = m_arm.tab.add("PID_ki", 0).getEntry();
+  private GenericEntry PID_kd = m_arm.tab.add("PID_kd", 0).getEntry();
   public void anglePublish(){
     SmartDashboard.putNumber("Arm Angle", m_arm.ArmAngle());
+    SmartDashboard.putData(m_arm);
+    m_arm.getController().setPID(PID_kp.getDouble(0), PID_ki.getDouble(0), PID_kd.getDouble(0));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
